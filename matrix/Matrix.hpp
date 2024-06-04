@@ -23,13 +23,12 @@ class Matrix {
         int getCols() const;
         std::array<int, 2> getShape() const;
         T getElement(int row, int col) const;
+        Vector<T> toVector() const;
 
         // Operator overloading
         Matrix<T> operator+(const Matrix<T> & m);
         Matrix<T> operator-(const Matrix<T> & m);
         Matrix<T> operator*(const Matrix<T> & m);
-
-        //  toVector(); // Need to implement it when Vector class is implemented
 };
 
 // Overload the << operator in order to print the matrix
@@ -136,6 +135,15 @@ std::array<int, 2> Matrix<T>::getShape() const {
 template <class T>
 T Matrix<T>::getElement(int row, int col) const {
     return matrix[row * nCols + col];
+};
+
+template <class T>
+Vector<T> Matrix<T>::toVector() const {
+    std::vector<T> data = std::vector<T>();
+    for (int i = 0; i < nElements; i++) {
+        data.push_back(matrix[i]);
+    }
+    return Vector<T>(data);
 };
 
 #endif

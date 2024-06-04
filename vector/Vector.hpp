@@ -5,6 +5,9 @@
 #include <vector>
 #include <iostream>
 
+template <class>
+class Matrix;
+
 template <class T>
 class Vector {
     private:
@@ -21,13 +24,12 @@ class Vector {
         // Member Functions
         int getDims() const;
         T getElement(int index) const;
+        Matrix<T> toMatrix(int rows, int cols) const; 
 
         // Operator overloading
         Vector<T> operator+(const Vector<T> & v);
         Vector<T> operator-(const Vector<T> & v);
         Vector<T> operator*(const Vector<T> & v);
-        
-        //  toMatrix(int rows, int cols); // Need to implement it when Matrix class is implemented
 };
 
 // Overload the << operator in order to print the vector
@@ -87,6 +89,14 @@ T Vector<T>::getElement(int index) const {
         throw std::out_of_range("Index out of range");
     }
     return data[index];
+}
+
+template <class T>
+Matrix<T> Vector<T>::toMatrix(int rows, int cols) const {
+    if (rows * cols != nDims) {
+        throw std::invalid_argument("The number of elements in the vector must be equal to the number of elements in the matrix");
+    }
+    return Matrix<T>(rows, cols, data.data());
 }
 
 /***************************************
