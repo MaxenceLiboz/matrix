@@ -25,10 +25,10 @@ class Matrix {
         T getElement(int row, int col) const;
         Vector<T> toVector() const;
 
-        // Operator overloading
-        Matrix<T> operator+(const Matrix<T> & m);
-        Matrix<T> operator-(const Matrix<T> & m);
-        Matrix<T> operator*(const Matrix<T> & m);
+        // Add, substract and scalling function
+        Matrix<T> add(const Matrix<T> & m);
+        Matrix<T> substract(const Matrix<T> & m);
+        Matrix<T> scaling(T scalar);
 };
 
 // Overload the << operator in order to print the matrix
@@ -144,6 +144,41 @@ Vector<T> Matrix<T>::toVector() const {
         data.push_back(matrix[i]);
     }
     return Vector<T>(data);
+};
+
+/***************************************
+ * Add, substract and scalling function
+ * *************************************/
+template <class T>
+Matrix<T> Matrix<T>::add(const Matrix<T> & m) {
+    if (nRows != m.nRows || nCols != m.nCols) {
+        std::cout << "The matrices must have the same dimensions" << std::endl;
+        return *this;
+    }
+    for (int i = 0; i < nElements; i++) {
+        matrix[i] += m.matrix[i];
+    }
+    return *this;
+};
+
+template <class T>
+Matrix<T> Matrix<T>::substract(const Matrix<T> & m) {
+    if (nRows != m.nRows || nCols != m.nCols) {
+        std::cout << "The matrices must have the same dimensions" << std::endl;
+        return *this;
+    }
+    for (int i = 0; i < nElements; i++) {
+        matrix[i] -= m.matrix[i];
+    }
+    return *this;
+};
+
+template <class T>
+Matrix<T> Matrix<T>::scaling(T scalar) {
+    for (int i = 0; i < nElements; i++) {
+        matrix[i] *= scalar;
+    }
+    return *this;
 };
 
 #endif
