@@ -24,11 +24,14 @@ class Vector {
         // Member Functions
         int getDims() const;
         T getElement(int index) const;
-        Matrix<T> toMatrix(int rows, int cols) const; 
+        Matrix<T> toMatrix(int rows, int cols) const;
+
+        // Add, substract and scalling function
+        Vector<T> add(const Vector<T> & v);
+        Vector<T> substract(const Vector<T> & v);
+        Vector<T> scaling(T scalar);
 
         // Operator overloading
-        Vector<T> operator+(const Vector<T> & v);
-        Vector<T> operator-(const Vector<T> & v);
         Vector<T> operator*(const Vector<T> & v);
 };
 
@@ -94,14 +97,46 @@ T Vector<T>::getElement(int index) const {
 template <class T>
 Matrix<T> Vector<T>::toMatrix(int rows, int cols) const {
     if (rows * cols != nDims) {
-        throw std::invalid_argument("The number of elements in the vector must be equal to the number of elements in the matrix");
+        std::cout << "The dimension of the vector must be equal to the number of elements in the matrix" << std::endl;
+        return Matrix<T>();
     }
     return Matrix<T>(rows, cols, data.data());
 }
 
 /***************************************
- * Operator Overloading
+ * Add, substract and scalling function
  * *************************************/
+template <class T>
+Vector<T> Vector<T>::add(const Vector<T> & v) {
+    if (nDims != v.nDims) {
+        std::cout << "The vectors must have the same dimensions" << std::endl;
+        return *this;
+    }
+    for (int i = 0; i < nDims; i++) {
+        data[i] += v.data[i];
+    }
+    return *this;
+}
+
+template <class T>
+Vector<T> Vector<T>::substract(const Vector<T> & v) {
+    if (nDims != v.nDims) {
+        std::cout << "The vectors must have the same dimensions" << std::endl;
+        return *this;
+    }
+    for (int i = 0; i < nDims; i++) {
+        data[i] -= v.data[i];
+    }
+    return *this;
+}
+
+template <class T>
+Vector<T> Vector<T>::scaling(T scalar) {
+    for (int i = 0; i < nDims; i++) {
+        data[i] *= scalar;
+    }
+    return *this;
+}
 
 
 #endif 

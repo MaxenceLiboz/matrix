@@ -12,5 +12,11 @@ int main() {
     std::cout << m1.toVector() << std::endl;
 
     std::cout << v1.toMatrix(2, 2) << std::endl;
+
+    Vector<float> v2 = Vector<float>(std::vector<float>{1, 2, 3, 4});
+
+    std::cout << v1.add(v2) << std::endl;
+    std::cout << v1.substract(v2) << std::endl;
+    std::cout << v1.scaling(2) << std::endl;
     return 0;
 }
