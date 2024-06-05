@@ -34,12 +34,12 @@ class Matrix {
 // Overload the << operator in order to print the matrix
 template <class T>
 std::ostream & operator<<( std::ostream & o, Matrix<T> const & src ) {
-    o << "Matrix: [ ";
+    o << "[ ";
     for (int raw = 0; raw < src.getRows(); raw++) {
         if (raw != 0 && raw != src.getRows() -1){
-            o << "\t| ";
+            o << "| ";
         } else if (raw == src.getRows() - 1) {
-            o << "\t[ ";
+            o << "[ ";
         }
         for (int col = 0; col < src.getCols(); col++) {
             o << src.getElement(raw, col) << " ";

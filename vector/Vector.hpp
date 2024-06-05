@@ -38,13 +38,13 @@ class Vector {
 // Overload the << operator in order to print the vector
 template <class T>
 std::ostream & operator<<( std::ostream & o, Vector<T> const & src ) {
-    o << "Vector: [ ";
+    o << "[ ";
     o << src.getElement(0) << " ]" << std::endl;
     for (int i = 1; i < src.getDims() - 1; i++) {
-        o << "\t| " << src.getElement(i) << " |" << std::endl; 
+        o << "| " << src.getElement(i) << " |" << std::endl; 
 
     }
-    o << "\t[ " << src.getElement(src.getDims() - 1) << " ]" << std::endl;
+    o << "[ " << src.getElement(src.getDims() - 1) << " ]" << std::endl;
     return o;
 }
 
