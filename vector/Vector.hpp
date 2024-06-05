@@ -13,12 +13,13 @@ template <class T>
 class Vector {
     private:
         std::vector<T> data;
-        int nDims;
+        long nDims;
     
     public:
         // Constructor and Destructor
         Vector();
-        Vector(std::vector<T> inputData);
+        Vector(std::initializer_list<T> inputData);
+        Vector(long nDims, T value);
         Vector(const Vector & v);
         ~Vector();
 
@@ -61,9 +62,15 @@ Vector<T>::Vector() {
 }
 
 template <class T>
-Vector<T>::Vector(std::vector<T> inputData) {
-    data = inputData;
+Vector<T>::Vector(std::initializer_list<T> inputData) {
+    data = std::vector<T>(inputData);
     nDims = data.size();
+}
+
+template <class T>
+Vector<T>::Vector(long nDims, T value) {
+    data = std::vector<T>(nDims, value);
+    this->nDims = nDims;
 }
 
 template <class T>
@@ -162,7 +169,7 @@ Vector<T> linear_combination(std::array<Vector<T>, S> vectors, std::array<T, S> 
             return Vector<T>();
         }
     }
-    Vector<T> result = Vector<T>(std::vector<T>(nDims, 0));
+    Vector<T> result = Vector<T>(nDims, 0);
     for (int i = 0; i < nDims; i++) {
         for (int j = 0; j < S; j++) {
             result.data.at(i) += vectors[j].getElement(i) * scalars[j];

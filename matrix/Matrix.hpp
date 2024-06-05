@@ -14,7 +14,7 @@ class Matrix {
         // Constructor and Destructor
         Matrix();
         Matrix(int rows, int cols);
-        Matrix(int rows, int cols, const T * inputmatrix);
+        Matrix(std::initializer_list<std::initializer_list<T>> inputmatrix);
         Matrix(const Matrix & m);
         ~Matrix();
 
@@ -38,7 +38,7 @@ std::ostream & operator<<( std::ostream & o, Matrix<T> const & src ) {
     for (int raw = 0; raw < src.getRows(); raw++) {
         if (raw != 0 && raw != src.getRows() -1){
             o << "| ";
-        } else if (raw == src.getRows() - 1) {
+        } else if (raw == src.getRows() - 1 && raw != 0) {
             o << "[ ";
         }
         for (int col = 0; col < src.getCols(); col++) {
@@ -80,18 +80,27 @@ Matrix<T>::Matrix(int rows, int cols) {
 };
 
 template <class T>
-Matrix<T>::Matrix(int rows, int cols, const T * inputmatrix) {
-    nRows = rows;
-    nCols = cols;
-    nElements = rows * cols;
+Matrix<T>::Matrix(std::initializer_list<std::initializer_list<T>> inputmatrix) {
+    nRows = inputmatrix.size();
+    nCols = inputmatrix.begin()->size();
+    nElements = nRows * nCols;
     matrix = new T[nElements];
-    if (sizeof(inputmatrix) != sizeof(matrix)) {
-        std::cout << "The input matrix does not have the same number of elements as the matrix" << std::endl;
-        delete[] matrix;
-        return;
-    }
-    for (int i = 0; i < nElements; i++) {
-        matrix[i] = inputmatrix[i];
+    int i = 0;
+    for (std::initializer_list<T> row : inputmatrix) {
+        for (T element : row) {
+            if (row.size() != nCols) {
+                std::cout << "All rows must have the same number of columns, empty matrix created" << std::endl;
+                delete[] matrix;
+                nRows = 1;
+                nCols = 1;
+                nElements = 1;
+                matrix = new T[nElements];
+                matrix[0] = 0.0;
+                return;
+            }
+            matrix[i] = element;
+            i++;
+        }
     }
 };
 
