@@ -41,6 +41,9 @@ class Vector {
         template <class U>
         friend Vector<U> lerp(Vector<U> v1, Vector<U> v2, U t);
 
+        // Dot product
+        T dot(const Vector<T> & v) const;
+
 };
 
 // Overload the << operator in order to print the vector
@@ -199,6 +202,23 @@ Vector<T> lerp(Vector<T> v1, Vector<T> v2, T t) {
     Vector<T> result = Vector<T>(nDims, 0);
     for (int i = 0; i < nDims; i++) {
         result.data.at(i) = v1.getElement(i) + t * (v2.getElement(i) - v1.getElement(i));
+    }
+    return result;
+}
+
+/***************************************
+ * Dot product
+ * *************************************/
+
+template <class T>
+T Vector<T>::dot(const Vector<T> & v) const {
+    if (nDims != v.nDims) {
+        std::cout << "The vectors must have the same dimensions" << std::endl;
+        return 0;
+    }
+    T result = 0;
+    for (int i = 0; i < nDims; i++) {
+        result += data[i] * v.data[i];
     }
     return result;
 }
