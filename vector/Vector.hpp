@@ -52,6 +52,10 @@ class Vector {
         T norm() const;
         T norm_inf() const;
 
+        // Cosine
+        template <class U>
+        friend U cosine(Vector<U> &v1, Vector<U> &v2);
+
 };
 
 // Overload the << operator in order to print the vector
@@ -264,6 +268,22 @@ T Vector<T>::norm_inf() const {
         result = abs(i) > result ? abs(i) : result;
     }
     return result;
+}
+
+/***************************************
+ * Cosine
+ * *************************************/
+
+template <class T>
+T cosine(Vector<T> &v1, Vector<T> &v2) {
+    if (v1.getDims() != v2.getDims()) {
+        std::cout << "The vectors must have the same dimensions" << std::endl;
+        return 0;
+    }
+    T dot = v1.dot(v2);
+    T norm_v1 = v1.norm();
+    T norm_v2 = v2.norm();
+    return dot / (norm_v1 * norm_v2);
 }
 
 #endif 
