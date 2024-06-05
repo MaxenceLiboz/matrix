@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <iostream>
+#include <array>
 
 template <class>
 class Matrix;
@@ -26,13 +27,14 @@ class Vector {
         T getElement(int index) const;
         Matrix<T> toMatrix(int rows, int cols) const;
 
-        // Add, substract and scalling function
+        // Add, sub and scalling function
         Vector<T> add(const Vector<T> & v);
-        Vector<T> substract(const Vector<T> & v);
-        Vector<T> scaling(T scalar);
+        Vector<T> sub(const Vector<T> & v);
+        Vector<T> scl(const T & scalar);
 
-        // Operator overloading
-        Vector<T> operator*(const Vector<T> & v);
+        // Linear combination
+        template <class U, size_t S>
+        friend Vector<U> linear_combination(std::array<Vector<U>, S> vectors, std::array<U, S> scalars);
 };
 
 // Overload the << operator in order to print the vector
@@ -104,7 +106,7 @@ Matrix<T> Vector<T>::toMatrix(int rows, int cols) const {
 }
 
 /***************************************
- * Add, substract and scalling function
+ * Add, sub and scalling function
  * *************************************/
 template <class T>
 Vector<T> Vector<T>::add(const Vector<T> & v) {
@@ -119,7 +121,7 @@ Vector<T> Vector<T>::add(const Vector<T> & v) {
 }
 
 template <class T>
-Vector<T> Vector<T>::substract(const Vector<T> & v) {
+Vector<T> Vector<T>::sub(const Vector<T> & v) {
     if (nDims != v.nDims) {
         std::cout << "The vectors must have the same dimensions" << std::endl;
         return *this;
@@ -131,11 +133,42 @@ Vector<T> Vector<T>::substract(const Vector<T> & v) {
 }
 
 template <class T>
-Vector<T> Vector<T>::scaling(T scalar) {
+Vector<T> Vector<T>::scl(const T & scalar) {
     for (int i = 0; i < nDims; i++) {
         data[i] *= scalar;
     }
     return *this;
+}
+
+/***************************************
+ * Linear combination
+ *  - It is a computation where all vector are mulitplied by a scalar
+ *  and then added together
+ * *************************************/
+template <class T, size_t S>
+Vector<T> linear_combination(std::array<Vector<T>, S> vectors, std::array<T, S> scalars) {
+    if (S == 0) {
+        std::cout << "The number of vectors must be greater than 0" << std::endl;
+        return Vector<T>();
+    }
+    if (S != scalars.size()) {
+        std::cout << "The number of scalars must be equal to the number of vectors" << std::endl;
+        return Vector<T>();
+    }
+    int nDims = vectors[0].getDims();
+    for (int i = 1; i < S; i++) {
+        if (nDims != vectors[i].getDims()) {
+            std::cout << "All vectors must have the same dimensions" << std::endl;
+            return Vector<T>();
+        }
+    }
+    Vector<T> result = Vector<T>(std::vector<T>(nDims, 0));
+    for (int i = 0; i < nDims; i++) {
+        for (int j = 0; j < S; j++) {
+            result.data.at(i) += vectors[j].getElement(i) * scalars[j];
+        }
+    }
+    return result;
 }
 
 

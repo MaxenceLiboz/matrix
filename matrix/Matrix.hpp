@@ -25,10 +25,10 @@ class Matrix {
         T getElement(int row, int col) const;
         Vector<T> toVector() const;
 
-        // Add, substract and scalling function
+        // Add, sub and scalling function
         Matrix<T> add(const Matrix<T> & m);
-        Matrix<T> substract(const Matrix<T> & m);
-        Matrix<T> scaling(T scalar);
+        Matrix<T> sub(const Matrix<T> & m);
+        Matrix<T> scl(T scalar);
 };
 
 // Overload the << operator in order to print the matrix
@@ -147,7 +147,7 @@ Vector<T> Matrix<T>::toVector() const {
 };
 
 /***************************************
- * Add, substract and scalling function
+ * Add, sub and scalling function
  * *************************************/
 template <class T>
 Matrix<T> Matrix<T>::add(const Matrix<T> & m) {
@@ -162,7 +162,7 @@ Matrix<T> Matrix<T>::add(const Matrix<T> & m) {
 };
 
 template <class T>
-Matrix<T> Matrix<T>::substract(const Matrix<T> & m) {
+Matrix<T> Matrix<T>::sub(const Matrix<T> & m) {
     if (nRows != m.nRows || nCols != m.nCols) {
         std::cout << "The matrices must have the same dimensions" << std::endl;
         return *this;
@@ -174,7 +174,7 @@ Matrix<T> Matrix<T>::substract(const Matrix<T> & m) {
 };
 
 template <class T>
-Matrix<T> Matrix<T>::scaling(T scalar) {
+Matrix<T> Matrix<T>::scl(T scalar) {
     for (int i = 0; i < nElements; i++) {
         matrix[i] *= scalar;
     }
