@@ -36,6 +36,11 @@ class Vector {
         // Linear combination
         template <class U, size_t S>
         friend Vector<U> linear_combination(std::array<Vector<U>, S> vectors, std::array<U, S> scalars);
+
+        // Linear interpolation
+        template <class U>
+        friend Vector<U> lerp(Vector<U> v1, Vector<U> v2, U t);
+
 };
 
 // Overload the << operator in order to print the vector
@@ -178,5 +183,24 @@ Vector<T> linear_combination(std::array<Vector<T>, S> vectors, std::array<T, S> 
     return result;
 }
 
+/***************************************
+ * Linear interpolation
+ * The goal is to transform the vector v1 into v2, however we will stop at a specific time t (between 0 and 1)
+ * For each point [i] in the vector, we will start at v1[i] and go to v2[i] at a specific time t
+ * *************************************/
+
+template <class T>
+Vector<T> lerp(Vector<T> v1, Vector<T> v2, T t) {
+    if (v1.getDims() != v2.getDims()) {
+        std::cout << "The vectors must have the same dimensions" << std::endl;
+        return v1;
+    }
+    int nDims = v1.getDims();
+    Vector<T> result = Vector<T>(nDims, 0);
+    for (int i = 0; i < nDims; i++) {
+        result.data.at(i) = v1.getElement(i) + t * (v2.getElement(i) - v1.getElement(i));
+    }
+    return result;
+}
 
 #endif 

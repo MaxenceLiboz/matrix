@@ -1,26 +1,22 @@
 #include "Vector.hpp"
 #include "Matrix.hpp"
 
-void run_linear_interpolation() {
+void run_lerp() {
 
-    Vector<float> e1 = Vector<float>({1, 0, 0});
-    Vector<float> e2 = Vector<float>({0, 1, 0});
-    Vector<float> e3 = Vector<float>({0, 0, 1});
+    std::cout << "Linear Interpolation" << std::endl;
+    std::cout << lerp(Vector<float>({0, 0}), Vector<float>({1, 1}), 0.0f) << std::endl;
+    std::cout << lerp(Vector<float>({0, 0}), Vector<float>({1, 1}), 0.5f) << std::endl;
+    std::cout << lerp(Vector<float>({0, 0}), Vector<float>({1, 1}), 1.0f) << std::endl;
+    std::cout << lerp(Vector<float>({2, 1}), Vector<float>({4, 2}), 0.3f) << std::endl;
 
-    std::cout << "e1:" << std::endl << e1 << std::endl;
-    std::cout << "e2:" << std::endl << e2 << std::endl;
-    std::cout << "e3:" << std::endl << e3 << std::endl;
-
-    Vector<float> v1 = Vector<float>({1, 2, 3});
-    Vector<float> v2 = Vector<float>({0, 10, -100});
-
-    std::cout << "v1:" << std::endl << v1 << std::endl;
-    std::cout << "v2:" << std::endl << v2 << std::endl;;
-
+    std::cout << lerp(Matrix<float>({{0, 0}, {0, 0}}), Matrix<float>({{1, 1}, {1, 1}}), 0.0f) << std::endl;
+    std::cout << lerp(Matrix<float>({{0, 0}, {0, 0}}), Matrix<float>({{1, 1}, {1, 1}}), 0.5f) << std::endl;
+    std::cout << lerp(Matrix<float>({{0, 0}, {0, 0}}), Matrix<float>({{1, 1}, {1, 1}}), 1.0f) << std::endl;
+    std::cout << lerp(Matrix<float>({{2, 1}, {3, 4}}), Matrix<float>({{20, 10}, {30, 40}}), 0.5f) << std::endl;
 }
 
 
 int main() {
-    run_linear_interpolation();
+    run_lerp();
     return 0;
 }

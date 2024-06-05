@@ -29,6 +29,10 @@ class Matrix {
         Matrix<T> add(const Matrix<T> & m);
         Matrix<T> sub(const Matrix<T> & m);
         Matrix<T> scl(T scalar);
+
+        // Linear interpolation
+        template <class U>
+        friend Matrix<U> lerp(Matrix<U> m1, Matrix<U> m2, U t);
 };
 
 // Overload the << operator in order to print the matrix
@@ -188,6 +192,24 @@ Matrix<T> Matrix<T>::scl(T scalar) {
         matrix[i] *= scalar;
     }
     return *this;
+};
+
+/***************************************
+ * Linear interpolation
+ * The goal is to transform the matrix m1 into m2, however we will stop at a specific time t (between 0 and 1)
+ * For each point [i] of the matrix we will start from m1[i] to go to m2[i] at a specific time t
+ * *************************************/
+template <class T>
+Matrix<T> lerp(Matrix<T> m1, Matrix<T> m2, T t) {
+    if (m1.nRows != m2.nRows || m1.nCols != m2.nCols) {
+        std::cout << "The matrices must have the same dimensions" << std::endl;
+        return Matrix<T>();
+    }
+    Matrix<T> result = Matrix<T>(m1);
+    for (int i = 0; i < m1.nElements; i++) {
+        result.matrix[i] = m1.matrix[i] + t * (m2.matrix[i] - m1.matrix[i]);
+    }
+    return result;
 };
 
 #endif
