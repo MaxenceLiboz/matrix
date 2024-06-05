@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <array>
+#include <cmath>
 
 template <class>
 class Matrix;
@@ -27,6 +28,8 @@ class Vector {
         int getDims() const;
         T getElement(int index) const;
         Matrix<T> toMatrix(int rows, int cols) const;
+        T abs(long index) const;
+        T sqrt(T value) const;
 
         // Add, sub and scalling function
         Vector<T> add(const Vector<T> & v);
@@ -43,6 +46,11 @@ class Vector {
 
         // Dot product
         T dot(const Vector<T> & v) const;
+
+        // Manahatan norm, Euclidean norm, supremum norm
+        T norm_1() const;
+        T norm() const;
+        T norm_inf() const;
 
 };
 
@@ -118,6 +126,11 @@ Matrix<T> Vector<T>::toMatrix(int rows, int cols) const {
         return Matrix<T>();
     }
     return Matrix<T>(rows, cols, data.data());
+}
+
+template <class T>
+T Vector<T>::abs(long index) const {
+    return data[index] < 0 ? -data[index] : data[index];
 }
 
 /***************************************
@@ -219,6 +232,36 @@ T Vector<T>::dot(const Vector<T> & v) const {
     T result = 0;
     for (int i = 0; i < nDims; i++) {
         result += data[i] * v.data[i];
+    }
+    return result;
+}
+
+/***************************************
+ * Manahatan norm, Euclidean norm, supremum norm
+ * *************************************/
+template <class T>
+T Vector<T>::norm_1() const {
+    T result = 0;
+    for (int i = 0; i < nDims; i++) {
+        result += abs(i);
+    }
+    return result;
+}
+
+template <class T>
+T Vector<T>::norm() const {
+    T result = 0;
+    for (int i = 0; i < nDims; i++) {
+        result += abs(i) * abs(i);
+    }
+    return std::pow(result, 0.5);
+}
+
+template <class T>
+T Vector<T>::norm_inf() const {
+    T result = 0;
+    for (int i = 0; i < nDims; i++) {
+        result = abs(i) > result ? abs(i) : result;
     }
     return result;
 }
