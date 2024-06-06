@@ -37,6 +37,9 @@ class Matrix {
         // Vector and matrix multiplication
         Vector<T> mul_vec(Vector<T> & v) const;
         Matrix<T> mul_mat(const Matrix<T> & m);
+
+        // Trace
+        T trace() const;
 };
 
 // Overload the << operator in order to print the matrix
@@ -288,6 +291,28 @@ Matrix<T> Matrix<T>::mul_mat(const Matrix<T> & m) {
                 result.matrix[row * m.nCols + col] += matrix[row * nCols + inner] * m.matrix[inner * m.nCols + col];
             }
         }
+    }
+    return result;
+};
+
+/***************************************
+ * Trace
+ * The trace of a matrix is the sum of the diagonal elements
+ * It is invariant which means it does not change if we change the basis of the matrix 
+ * *************************************/
+
+template <class T>
+T Matrix<T>::trace() const {
+    // Verify the input, return 0 if invalid
+    if (nRows != nCols) {
+        std::cout << "The matrix must be square" << std::endl;
+        return 0;
+    }
+
+    T result = 0;
+    for (int index = 0; index < nRows; index++) {
+        int currentRaw = index * nRows;
+        result += matrix[currentRaw + index];
     }
     return result;
 };
