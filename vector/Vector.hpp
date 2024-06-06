@@ -56,11 +56,19 @@ class Vector {
         template <class U>
         friend U cosine(Vector<U> &v1, Vector<U> &v2);
 
+        // Cross product
+        template <class U>
+        friend Vector<U> cross_product(Vector<U> &v1, Vector<U> &v2);
+
 };
 
 // Overload the << operator in order to print the vector
 template <class T>
 std::ostream & operator<<( std::ostream & o, Vector<T> const & src ) {
+    if (src.getDims() == 0) {
+        o << "[]" << std::endl;
+        return o;
+    }
     o << "[ ";
     o << src.getElement(0) << " ]" << std::endl;
     for (int i = 1; i < src.getDims() - 1; i++) {
@@ -284,6 +292,21 @@ T cosine(Vector<T> &v1, Vector<T> &v2) {
     T norm_v1 = v1.norm();
     T norm_v2 = v2.norm();
     return dot / (norm_v1 * norm_v2);
+}
+
+/***************************************
+ * Cross product
+ * *************************************/
+template <class T>
+Vector<T> cross_product(Vector<T> &v1, Vector<T> &v2) {
+    if (v1.getDims() != 3 || v2.getDims() != 3) {
+        std::cout << "The vectors must have 3 dimensions" << std::endl;
+        return Vector<T>();
+    }
+    Vector<T> result = Vector<T>({v1.getElement(1) * v2.getElement(2) - v1.getElement(2) * v2.getElement(1),
+                                   v1.getElement(2) * v2.getElement(0) - v1.getElement(0) * v2.getElement(2),
+                                   v1.getElement(0) * v2.getElement(1) - v1.getElement(1) * v2.getElement(0)});
+    return result;
 }
 
 #endif 
