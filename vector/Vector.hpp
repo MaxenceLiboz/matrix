@@ -60,6 +60,8 @@ class Vector {
         template <class U>
         friend Vector<U> cross_product(Vector<U> &v1, Vector<U> &v2);
 
+        // Matrix multiplication of vector
+        friend Vector<T> Matrix<T>::mul_vec(Vector<T> & v) const;
 };
 
 // Overload the << operator in order to print the vector
