@@ -26,6 +26,9 @@ class Matrix {
         T abs(long index) const;
         void printRow(int row) const;
 
+        // Overload the = operator
+        Matrix<T> & operator=(const Matrix<T> & m);
+
         // Add, sub and scalling function
         Matrix<T> add(const Matrix<T> & m);
         Matrix<T> sub(const Matrix<T> & m);
@@ -46,16 +49,21 @@ class Matrix {
         Matrix<T> transpose();
 
         // Compute row echelon form
-        Matrix<T> row_echelon_form(bool verbose = false);
+        Matrix<T> row_echelon_form(bool verbose = false, bool augmented = false);
 
         // Determinant
         T determinant();
+
+        // Inverse of a matrix
+        Matrix<T> inverse();
 
     private:
         // Helper function for determinant
         T twoDimensionalDeterminant(Matrix<T> m);
         T threeDimensionalDeterminant(Matrix<T> m);
         T fourDimensionalDeterminant(Matrix<T> m);
+        Matrix<T> augmentedMatrix() const;
+        Matrix<T> removeAugmentation() const;
 };
 
 // Overload the << operator in order to print the matrix
@@ -190,6 +198,25 @@ void Matrix<T>::printRow(int row) const {
         std::cout << matrix[row * nCols + i] << " ";
     }
     std::cout << std::endl;
+};
+
+/***************************************
+ * Overload the = operator
+ * *************************************/
+template <class T>
+Matrix<T> & Matrix<T>::operator=(const Matrix<T> & m) {
+    if (this == &m) {
+        return *this;
+    }
+    delete[] matrix;
+    nRows = m.nRows;
+    nCols = m.nCols;
+    nElements = m.nElements;
+    matrix = new T[nElements];
+    for (int i = 0; i < nElements; i++) {
+        matrix[i] = m.matrix[i];
+    }
+    return *this;
 };
 
 /***************************************
@@ -373,15 +400,16 @@ Matrix<T> Matrix<T>::transpose() {
  * *************************************/
 
 template <class T>
-Matrix<T> Matrix<T>::row_echelon_form(bool verbose) {
+Matrix<T> Matrix<T>::row_echelon_form(bool verbose, bool augmented) {
     if (verbose) std::cout << "Computing row echelon form" << std::endl << std::endl;
     // Copy the current matrix
     Matrix<T> result = Matrix<T>(*this);
+    int colNumber = augmented == true ? nCols / 2 : nCols;
 
     if (verbose) std::cout << result;
 
     int current_row = 0;
-    for (int col = 0; col < nCols; col++) {
+    for (int col = 0; col < colNumber; col++) {
         if (current_row == nRows) {
             break;
         }
@@ -539,6 +567,55 @@ T Matrix<T>::determinant() {
         std::cout << "The determinant of a matrix with a dimension greater than 4 is not implemented" << std::endl;
         return 0;
     }
+};
+
+/***************************************
+ * Inverse of a matrix
+ * The inverse of a matrix is a matrix that when multiplied with the original matrix gives the identity matrix
+ * The inverse of a matrix A is denoted A^-1
+ * The inverse of a matrix is only defined for square matrices
+ * *************************************/
+
+// Helper function to create the augmented matrix
+template <class T>
+Matrix<T> Matrix<T>::augmentedMatrix() const {
+    Matrix<T> result = Matrix<T>(nRows, nCols * 2);
+    for (int row = 0; row < nRows; row++) {
+        for (int col = 0; col < nCols; col++) {
+            result.matrix[row * nCols * 2 + col] = matrix[row * nCols + col];
+        }
+        result.matrix[row * nCols * 2 + nCols + row] = 1;
+    }
+    return result;
+};
+
+template <class T>
+Matrix<T> Matrix<T>::removeAugmentation() const {
+    Matrix<T> result = Matrix<T>(nRows, nCols / 2);
+    for (int row = 0; row < nRows; row++) {
+        int oldCol = nCols / 2;
+        for (int col = 0; col < nCols / 2; col++) {
+            result.matrix[row * nCols / 2 + col] = matrix[row * nCols + col + oldCol];
+        }
+    }
+    return result;
+};
+
+template <class T>
+Matrix<T> Matrix<T>::inverse() {
+    if (nRows != nCols) {
+        std::cout << "The matrix must be square" << std::endl;
+        return Matrix<T>();
+    }
+
+    T det = determinant();
+    if (det == 0) {
+        throw std::invalid_argument("The determinant of the matrix is 0, the inverse does not exist");
+    }
+
+    Matrix<T> augmented = augmentedMatrix();
+    augmented = augmented.row_echelon_form(false, true);
+    return augmented.removeAugmentation();
 };
 
 #endif
