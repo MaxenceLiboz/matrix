@@ -47,6 +47,15 @@ class Matrix {
 
         // Compute row echelon form
         Matrix<T> row_echelon_form(bool verbose = false);
+
+        // Determinant
+        T determinant();
+
+    private:
+        // Helper function for determinant
+        T twoDimensionalDeterminant(Matrix<T> m);
+        T threeDimensionalDeterminant(Matrix<T> m);
+        T fourDimensionalDeterminant(Matrix<T> m);
 };
 
 // Overload the << operator in order to print the matrix
@@ -425,6 +434,111 @@ Matrix<T> Matrix<T>::row_echelon_form(bool verbose) {
     }
 
     return result;
+};
+
+/***************************************
+ * Determinant
+ * The determinant of a matrix is a scalar value that can be computed from the elements of a square matrix
+ * The determinant of a matrix A is denoted det(A) or |A|
+ * The determinant is the factor by which a linear transformation changes the area of any given shape (2D) or the volume of any given object (3D+)
+ * When det(A) = 0 the volume or the area is reduced to 0
+ * *************************************/
+
+template <class T>
+/* Example:
+* | a11 a12 |
+* | a21 a22 |
+*
+* det(A) = a11 * a22 - a12 * a21
+*/
+T Matrix<T>::twoDimensionalDeterminant(Matrix<T> m) {
+    return m.getElement(0, 0) * m.getElement(1, 1) - m.getElement(0, 1) * m.getElement(1, 0);
+};
+
+template <class T>
+/* Exmaple:
+* | a11 a12 a13 |
+* | a21 a22 a23 |
+* | a31 a32 a33 |
+*
+* det(A) = a11 * det({a22, a23, a32, a33}) -
+*          a12 * det({a21, a23, a31, a33}) +
+*          a13 * det({a21, a22, a31, a32})
+*/
+T Matrix<T>::threeDimensionalDeterminant(Matrix<T> m) {
+    T detA11 = twoDimensionalDeterminant(Matrix<T>({
+        {m.getElement(1, 1), m.getElement(1, 2)}, 
+        {m.getElement(2, 1), m.getElement(2, 2)}
+    }));
+    T detA12 = twoDimensionalDeterminant(Matrix<T>({
+        {m.getElement(1, 0), m.getElement(1, 2)}, 
+        {m.getElement(2, 0), m.getElement(2, 2)}
+    }));
+    T detA13 = twoDimensionalDeterminant(Matrix<T>({
+        {m.getElement(1, 0), m.getElement(1, 1)}, 
+        {m.getElement(2, 0), m.getElement(2, 1)}
+    }));
+
+    return m.getElement(0, 0) * detA11 - m.getElement(0, 1) * detA12 + m.getElement(0, 2) * detA13;   
+};
+
+template <class T>
+/* Exmaple:
+* | a11 a12 a13 a14 |
+* | a21 a22 a23 a24 |
+* | a31 a32 a33 a34 |
+* | a41 a42 a43 a44 |
+*
+* det(A) = a11 * det({a22, a23, a24, a32, a33, a34, a42, a43, a44}) -
+*          a12 * det({a21, a23, a24, a31, a33, a34, a41, a43, a44}) +
+*          a13 * det({a21, a22, a24, a31, a32, a34, a41, a42, a44}) -
+*          a14 * det({a21, a22, a23, a31, a32, a33, a41, a42, a43})
+*/
+T Matrix<T>::fourDimensionalDeterminant(Matrix<T> m) {
+    T detA11 = threeDimensionalDeterminant(Matrix<T>({
+        {m.getElement(1, 1), m.getElement(1, 2), m.getElement(1, 3)}, 
+        {m.getElement(2, 1), m.getElement(2, 2), m.getElement(2, 3)}, 
+        {m.getElement(3, 1), m.getElement(3, 2), m.getElement(3, 3)}
+    }));
+
+    T detA12 = threeDimensionalDeterminant(Matrix<T>({
+        {m.getElement(1, 0), m.getElement(1, 2), m.getElement(1, 3)}, 
+        {m.getElement(2, 0), m.getElement(2, 2), m.getElement(2, 3)}, 
+        {m.getElement(3, 0), m.getElement(3, 2), m.getElement(3, 3)}
+    }));
+
+    T detA13 = threeDimensionalDeterminant(Matrix<T>({
+        {m.getElement(1, 0), m.getElement(1, 1), m.getElement(1, 3)},
+        {m.getElement(2, 0), m.getElement(2, 1), m.getElement(2, 3)},
+        {m.getElement(3, 0), m.getElement(3, 1), m.getElement(3, 3)}
+    }));
+
+    T detA14 = threeDimensionalDeterminant(Matrix<T>({
+        {m.getElement(1, 0), m.getElement(1, 1), m.getElement(1, 2)},
+        {m.getElement(2, 0), m.getElement(2, 1), m.getElement(2, 2)},
+        {m.getElement(3, 0), m.getElement(3, 1), m.getElement(3, 2)}
+    }));
+
+    return m.getElement(0, 0) * detA11 - m.getElement(0, 1) * detA12 + m.getElement(0, 2) * detA13 - m.getElement(0, 3) * detA14;
+};
+
+template <class T>
+T Matrix<T>::determinant() {
+    if (nRows != nCols) {
+        std::cout << "The matrix must be square" << std::endl;
+        return 0;
+    }
+
+    if (nRows == 2) {
+        return twoDimensionalDeterminant(*this);
+    } else if (nRows == 3) {
+        return threeDimensionalDeterminant(*this);
+    } else if (nRows == 4) {
+        return fourDimensionalDeterminant(*this);
+    } else {
+        std::cout << "The determinant of a matrix with a dimension greater than 4 is not implemented" << std::endl;
+        return 0;
+    }
 };
 
 #endif
