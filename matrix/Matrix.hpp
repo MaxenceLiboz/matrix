@@ -21,9 +21,10 @@ class Matrix {
         // Member Functions
         int getRows() const;
         int getCols() const;
-        std::array<int, 2> getShape() const;
         T getElement(int row, int col) const;
         Vector<T> toVector() const;
+        T abs(long index) const;
+        void printRow(int row) const;
 
         // Add, sub and scalling function
         Matrix<T> add(const Matrix<T> & m);
@@ -40,6 +41,12 @@ class Matrix {
 
         // Trace
         T trace() const;
+
+        // Transpose
+        Matrix<T> transpose();
+
+        // Compute row echelon form
+        Matrix<T> row_echelon_form(bool verbose = false);
 };
 
 // Overload the << operator in order to print the matrix
@@ -148,11 +155,6 @@ int Matrix<T>::getCols() const {
 };
 
 template <class T>
-std::array<int, 2> Matrix<T>::getShape() const {
-    return {nRows, nCols};
-};
-
-template <class T>
 T Matrix<T>::getElement(int row, int col) const {
     return matrix[row * nCols + col];
 };
@@ -164,6 +166,21 @@ Vector<T> Matrix<T>::toVector() const {
         data.push_back(matrix[i]);
     }
     return Vector<T>(data);
+};
+
+template <class T>
+T Matrix<T>::abs(long index) const {
+    T value = matrix[index];
+    return value > 0 ? value : -value;
+};
+
+template <class T>
+void Matrix<T>::printRow(int row) const {
+    std::cout << "Row " << row << ": ";
+    for (int i = 0; i < nCols; i++) {
+        std::cout << matrix[row * nCols + i] << " ";
+    }
+    std::cout << std::endl;
 };
 
 /***************************************
@@ -314,6 +331,99 @@ T Matrix<T>::trace() const {
         int currentRaw = index * nRows;
         result += matrix[currentRaw + index];
     }
+    return result;
+};
+
+/***************************************
+ * Transpose
+ * The transpose of a matrix is a new matrix where the rows of the original matrix are the columns of the new matrix
+ * and the columns of the original matrix are the rows of the new matrix
+ * *************************************/
+
+template <class T>
+Matrix<T> Matrix<T>::transpose() {
+    Matrix<T> result = Matrix<T>(nCols, nRows);
+    // For each raw in the original matrix
+    for (int raw = 0; raw < nRows; raw++) {
+        // For each column of a raw in the original matrix
+        for (int col = 0; col < nCols; col++) {
+            // The element at the position (raw, col) in the original matrix will be at the position (col, raw) in the transposed matrix
+            result.matrix[col * nRows + raw] = matrix[raw * nCols + col];
+        }
+    }
+    return result;
+};
+
+/***************************************
+ * Compute row echelon form
+ * The row echelon form of a matrix is a matrix where 
+ * - The first non-zero element of each row is 1 
+ * - The first non-zero element of each row is to the right of the first non-zero element of the row above
+ * - If a row has only zero elements, it is below the row with non-zero elements
+ * - https://ximera.osu.edu/linearalgebra/textbook/rowReduction/algorithm
+ * *************************************/
+
+template <class T>
+Matrix<T> Matrix<T>::row_echelon_form(bool verbose) {
+    if (verbose) std::cout << "Computing row echelon form" << std::endl << std::endl;
+    // Copy the current matrix
+    Matrix<T> result = Matrix<T>(*this);
+
+    if (verbose) std::cout << result;
+
+    int current_row = 0;
+    for (int col = 0; col < nCols; col++) {
+        if (current_row == nRows) {
+            break;
+        }
+        if (verbose) std::cout << "Current row: " << current_row << std::endl;
+
+        int non_zero_row = -1;
+        for (int row = current_row; row < nRows; row++) {
+            if (result.matrix[row * nCols + col] != 0) {
+                non_zero_row = row;
+                break;
+            }
+        }
+        if (non_zero_row == -1) {
+            continue;
+        }
+        if (verbose) {
+            std::cout << "Row with non zero element: ";
+            result.printRow(non_zero_row);
+        } 
+
+        if (non_zero_row != current_row) {
+            if (verbose) std::cout << "Swap row " << col << " with row " << non_zero_row << std::endl;
+            for (int i = 0; i < nCols; i++) {
+                std::swap(result.matrix[col * nCols + i], result.matrix[non_zero_row * nCols + i]);
+            }
+            if (verbose) std::cout << result;
+        }
+
+        if (result.matrix[current_row * nCols + col] != 1 && result.matrix[current_row * nCols + col] != 0) {
+            T factor = result.matrix[current_row * nCols + col];
+            if (verbose) std::cout << "leading value: " << result.matrix[current_row * nCols + col] << " dividing the row by: " << factor << std::endl;
+            for (int i = 0; i < nCols; i++) {
+                result.matrix[current_row * nCols + i] /= factor;
+            }
+            if (verbose) std::cout << result;
+        }
+
+        for (int row = 0; row < nRows; row++) {
+            if (result.matrix[col * nCols + col] != 0 && row != current_row) {
+                if (verbose) std::cout << "factor = " << result.matrix[row * nCols + col] << " / " << result.matrix[current_row * nCols + col] << std::endl;
+                T factor = result.matrix[row * nCols + col] / result.matrix[current_row * nCols + col];
+                if (verbose) std::cout << "row: " << row << " col: " << col << " value: " << result.matrix[row * nCols + col] << " factor: " << factor << std::endl;
+                for (int i = 0; i < nCols; i++) {
+                    result.matrix[row * nCols + i] -= factor * result.matrix[current_row * nCols + i];
+                }
+            }
+        }
+        current_row++;
+        if (verbose) std::cout << result << std::endl;
+    }
+
     return result;
 };
 
