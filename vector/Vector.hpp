@@ -38,23 +38,23 @@ class Vector {
 
         // Linear combination
         template <class U, size_t S>
-        friend Vector<U> linear_combination(std::array<Vector<U>, S> vectors, std::array<U, S> scalars);
+        friend Vector<U> linear_combination(std::array<Vector<U>, S> &vectors, std::array<U, S> &scalars);
 
         // Linear interpolation
         template <class U>
         friend Vector<U> lerp(Vector<U> v1, Vector<U> v2, U t);
 
         // Dot product
-        T dot(const Vector<T> & v) const;
+        T dot(const Vector<T> v) const;
 
         // Manahatan norm, Euclidean norm, supremum norm
         T norm_1() const;
         T norm() const;
         T norm_inf() const;
 
-        // Cosine
+        // angle_cos
         template <class U>
-        friend U cosine(Vector<U> &v1, Vector<U> &v2);
+        friend U angle_cos(Vector<U> &v1, Vector<U> &v2);
 
         // Cross product
         template <class U>
@@ -188,7 +188,7 @@ Vector<T> Vector<T>::scl(const T & scalar) {
  *  and then added together
  * *************************************/
 template <class T, size_t S>
-Vector<T> linear_combination(std::array<Vector<T>, S> vectors, std::array<T, S> scalars) {
+Vector<T> linear_combination(std::array<Vector<T>, S> &vectors, std::array<T, S> &scalars) {
     if (S == 0) {
         std::cout << "The number of vectors must be greater than 0" << std::endl;
         return Vector<T>();
@@ -238,7 +238,7 @@ Vector<T> lerp(Vector<T> v1, Vector<T> v2, T t) {
  * *************************************/
 
 template <class T>
-T Vector<T>::dot(const Vector<T> & v) const {
+T Vector<T>::dot(const Vector<T> v) const {
     if (nDims != v.nDims) {
         std::cout << "The vectors must have the same dimensions" << std::endl;
         return 0;
@@ -281,11 +281,11 @@ T Vector<T>::norm_inf() const {
 }
 
 /***************************************
- * Cosine
+ * angle_cos
  * *************************************/
 
 template <class T>
-T cosine(Vector<T> &v1, Vector<T> &v2) {
+T angle_cos(Vector<T> &v1, Vector<T> &v2) {
     if (v1.getDims() != v2.getDims()) {
         std::cout << "The vectors must have the same dimensions" << std::endl;
         return 0;

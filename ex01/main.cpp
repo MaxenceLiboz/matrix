@@ -11,7 +11,10 @@ void run_linear_combinaison() {
     std::cout << "e2:" << std::endl << e2 << std::endl;
     std::cout << "e3:" << std::endl << e3 << std::endl;
 
-    Vector<float> e4 = linear_combination(std::array<Vector<float>, 3> {e1, e2, e3}, std::array<float, 3>{10, -2, 0.5});
+    std::array<Vector<float>, 3> vectors = {e1, e2, e3};
+    std::array<float, 3> scalars = {10, -2, 0.5};
+
+    Vector<float> e4 = linear_combination(vectors, scalars);
     std::cout << "e4:" << std::endl << e4 << std::endl;
     
     Vector<float> v1 = Vector<float>({1, 2, 3});
@@ -20,7 +23,10 @@ void run_linear_combinaison() {
     std::cout << "v1:" << std::endl << v1 << std::endl;
     std::cout << "v2:" << std::endl << v2 << std::endl;
 
-    Vector<float> v3 = linear_combination(std::array<Vector<float>, 2> {v1, v2}, std::array<float, 2>{10, -2});
+    std::array<Vector<float>, 2> vectors2 = {v1, v2};
+    std::array<float, 2> scalars2 = {10, -2};
+
+    Vector<float> v3 = linear_combination(vectors2, scalars2);
     std::cout << "v3:" << std::endl << v3 << std::endl;
 
 }

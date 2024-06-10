@@ -62,9 +62,9 @@ class Matrix {
 
     private:
         // Helper function for determinant
-        T twoDimensionalDeterminant(Matrix<T> m);
-        T threeDimensionalDeterminant(Matrix<T> m);
-        T fourDimensionalDeterminant(Matrix<T> m);
+        T twoDimensionalDeterminant(Matrix<T> m) const;
+        T threeDimensionalDeterminant(Matrix<T> m) const;
+        T fourDimensionalDeterminant(Matrix<T> m) const;
         Matrix<T> augmentedMatrix() const;
         Matrix<T> removeAugmentation() const;
 };
@@ -451,7 +451,7 @@ Matrix<T> Matrix<T>::row_echelon_form(bool verbose, bool augmented) const {
         }
 
         for (int row = 0; row < nRows; row++) {
-            if (result.matrix[col * nCols + col] != 0 && row != current_row) {
+            if (result.matrix[row * nCols + col] != 0 && row != current_row) {
                 if (verbose) std::cout << "factor = " << result.matrix[row * nCols + col] << " / " << result.matrix[current_row * nCols + col] << std::endl;
                 T factor = result.matrix[row * nCols + col] / result.matrix[current_row * nCols + col];
                 if (verbose) std::cout << "row: " << row << " col: " << col << " value: " << result.matrix[row * nCols + col] << " factor: " << factor << std::endl;
@@ -475,18 +475,17 @@ Matrix<T> Matrix<T>::row_echelon_form(bool verbose, bool augmented) const {
  * When det(A) = 0 the volume or the area is reduced to 0
  * *************************************/
 
-template <class T>
 /* Example:
 * | a11 a12 |
 * | a21 a22 |
 *
 * det(A) = a11 * a22 - a12 * a21
 */
-T Matrix<T>::twoDimensionalDeterminant(Matrix<T> m) {
+template <class T>
+T Matrix<T>::twoDimensionalDeterminant(Matrix<T> m) const{
     return m.getElement(0, 0) * m.getElement(1, 1) - m.getElement(0, 1) * m.getElement(1, 0);
 };
 
-template <class T>
 /* Exmaple:
 * | a11 a12 a13 |
 * | a21 a22 a23 |
@@ -496,7 +495,8 @@ template <class T>
 *          a12 * det({a21, a23, a31, a33}) +
 *          a13 * det({a21, a22, a31, a32})
 */
-T Matrix<T>::threeDimensionalDeterminant(Matrix<T> m) {
+template <class T>
+T Matrix<T>::threeDimensionalDeterminant(Matrix<T> m) const {
     T detA11 = twoDimensionalDeterminant(Matrix<T>({
         {m.getElement(1, 1), m.getElement(1, 2)}, 
         {m.getElement(2, 1), m.getElement(2, 2)}
@@ -513,7 +513,6 @@ T Matrix<T>::threeDimensionalDeterminant(Matrix<T> m) {
     return m.getElement(0, 0) * detA11 - m.getElement(0, 1) * detA12 + m.getElement(0, 2) * detA13;   
 };
 
-template <class T>
 /* Exmaple:
 * | a11 a12 a13 a14 |
 * | a21 a22 a23 a24 |
@@ -525,7 +524,8 @@ template <class T>
 *          a13 * det({a21, a22, a24, a31, a32, a34, a41, a42, a44}) -
 *          a14 * det({a21, a22, a23, a31, a32, a33, a41, a42, a43})
 */
-T Matrix<T>::fourDimensionalDeterminant(Matrix<T> m) {
+template <class T>
+T Matrix<T>::fourDimensionalDeterminant(Matrix<T> m) const {
     T detA11 = threeDimensionalDeterminant(Matrix<T>({
         {m.getElement(1, 1), m.getElement(1, 2), m.getElement(1, 3)}, 
         {m.getElement(2, 1), m.getElement(2, 2), m.getElement(2, 3)}, 
